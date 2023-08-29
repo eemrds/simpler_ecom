@@ -34,6 +34,7 @@ class SimpleAPI(BaseHTTPRequestHandler):
 
         self.send_response(200)
         self.send_header("Content-type", "application/json")
+        self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
 
         response = {
@@ -41,6 +42,13 @@ class SimpleAPI(BaseHTTPRequestHandler):
             "data": data_from_mongo
         }
         self.wfile.write(json.dumps(response, default=str).encode("utf-8"))
+    
+    def do_OPTIONS(self):
+        self.send_response(200, "ok")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.end_headers()
 
     def do_PUT(self):
         length = int(self.headers['Content-Length'])
@@ -63,11 +71,11 @@ class SimpleAPI(BaseHTTPRequestHandler):
         db = client.simpledatabase
         coll = db["products"]
 
-        # Update stock
         coll.update_one({'id': product_id}, {'$inc': {'amount_left': -1}})
 
         self.send_response(200)
         self.send_header("Content-type", "application/json")
+        self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
 
         response = {"message": "Stock decreased by 1"}

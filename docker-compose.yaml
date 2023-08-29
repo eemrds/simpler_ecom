@@ -1,9 +1,7 @@
-version: '3.8'
+version: '3'
 services:
   backend:
     build: ./backend
-    # dns:
-    #   - 8.8.8.8
     ports:
       - "8080:8080"
     depends_on:
@@ -18,11 +16,9 @@ services:
       - mongo-data:/data/db
     
   frontend:
-    image: nginx:alpine
-    volumes:
-      - ./frontend:/usr/share/nginx/html:ro
+    build: ./frontend
     ports:
-      - "8081:80"
+      - "80:80"
 
 volumes:
   mongo-data:
