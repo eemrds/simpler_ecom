@@ -10,4 +10,3 @@ sudo ./scripts/dockerhub_push.sh
 set +x
 
 echo "Kubernetes cluster launched. Waiting for pods to be ready..."
-echo "Go to http://$ip:30081."
