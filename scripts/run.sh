@@ -9,7 +9,7 @@ set -x
 sudo ./scripts/install.sh
 echo "API_IP=${ip}" > ./frontend/.env
 sudo ./scripts/dockerhub_push.sh
-sudo ./scripts/kubernetes_launch.sh
+./scripts/kubernetes_launch.sh
 set +x
 
 echo "Kubernetes cluster launched. Waiting for pods to be ready..."
