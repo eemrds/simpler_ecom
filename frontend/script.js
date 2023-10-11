@@ -6,6 +6,7 @@ const link = `http://${ip}:30080/`;
 console.log(link)
 
 let data = [] 
+document.addEventListener('DOMContentLoaded', () => {
 axios.get(link)
     .then(response => {
         data = response.data;
@@ -14,6 +15,8 @@ axios.get(link)
     .catch(error => {
         console.error('Error fetching data:', error);
     });
+});
+
 console.log(data)
 
 data.forEach(product => {
