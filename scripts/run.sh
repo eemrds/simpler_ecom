@@ -6,7 +6,7 @@ set -x
 sudo ./scripts/install.sh
 sudo docker login
 sudo ./scripts/dockerhub_push.sh
-./scripts/kubernetes_launch.sh
+sudo ./scripts/kubernetes_launch.sh
 set +x
 
 echo "Kubernetes cluster launched. Waiting for pods to be ready..."
