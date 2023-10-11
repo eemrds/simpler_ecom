@@ -2,7 +2,7 @@ require('dotenv').config();
 const axios = require('axios');
 
 const ip = process.env.API_IP;
-const link = `http://${ip}:8080/`;
+const link = `http://${ip}:30080/`;
 console.log(link)
 
 let data = [] 
