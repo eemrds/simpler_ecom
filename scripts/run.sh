@@ -4,6 +4,7 @@
 
 set -x
 sudo ./scripts/install.sh
+sudo docker login
 sudo ./scripts/dockerhub_push.sh
 ./scripts/kubernetes_launch.sh
 set +x
