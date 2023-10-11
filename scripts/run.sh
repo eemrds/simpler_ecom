@@ -7,8 +7,7 @@ ip=${ip:-"127.0.0.1"}
 
 set -x
 ./scripts/install.sh
-echo $ip > .env
-
+echo "API_IP=${ip}" > frontend/.env
 ./scripts/dockerhub_push.sh
 ./scripts/kubernetes_launch.sh
 set +x
