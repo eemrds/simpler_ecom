@@ -13,4 +13,4 @@ echo "API_IP=${ip}" > frontend/.env
 set +x
 
 echo "Kubernetes cluster launched. Waiting for pods to be ready..."
-echo "Go to https://$ip:80081."
+echo "Go to http://$ip:80081."
