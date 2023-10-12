@@ -24,8 +24,8 @@
     </div>
 
     <script>
-        let link = 'http://54.211.205.82'
-        let port = '30080'
+        let link = 'http://localhost'
+        let port = '8080'
         let url = `${link}:${port}`;
         fetch(`${url}/products`)
         .then(response => response.json())
@@ -53,6 +53,7 @@
                 const buyBtn = document.createElement('button');
                 buyBtn.innerText = 'Buy';
                 buyBtn.onclick = () => {
+                    console.log(product.id);
                     fetch(`${url}/products`, {
                         method: 'PUT',
                         headers: {
@@ -63,6 +64,7 @@
                     .then(response => response.json())
                     .then(data => {
                         alert(data.message);
+                        location.reload();
                     })
                     .catch(error => {
                         console.error('Error:', error);

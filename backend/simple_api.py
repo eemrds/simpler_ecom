@@ -57,6 +57,12 @@ class ProductList(BaseModel):
     data: List[Product]
 
 
+class ProductUpdate(BaseModel):
+    """Product update model"""
+
+    id: str
+
+
 @app.get("/products", response_model=ProductList)
 async def get_products(id: Optional[str] = None) -> ProductList:
     """Get all products or a single product by id
@@ -78,7 +84,7 @@ async def get_products(id: Optional[str] = None) -> ProductList:
 
 
 @app.put("/products", response_model=dict)
-async def update_product(product: Product) -> Dict[str, Any]:
+async def update_product(product: ProductUpdate) -> Dict[str, Any]:
     """Update a product
 
     Args:
@@ -87,6 +93,7 @@ async def update_product(product: Product) -> Dict[str, Any]:
     Raises:
         HTTPException: If the product id is missing
     """
+    print(product)
     if not product.id:
         raise HTTPException(status_code=400, detail="Missing 'id'")
 
