@@ -24,8 +24,9 @@
     </div>
 
     <script>
-        let link = 'http://100.24.236.42:30080';
-        fetch(link)
+        let link = 'http://100.24.236.42'
+        let url = `${link}:30080`;
+        fetch(url)
         .then(response => response.json())
         .then(data => {
             const productContainer = document.getElementById('productContainer');
@@ -51,7 +52,7 @@
                 const buyBtn = document.createElement('button');
                 buyBtn.innerText = 'Buy';
                 buyBtn.onclick = () => {
-                    fetch(link, {
+                    fetch(url, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
