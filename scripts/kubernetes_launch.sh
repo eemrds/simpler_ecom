@@ -1,4 +1,3 @@
-kubectl apply -f kubernetes/ingress-controller.yaml
 kubectl apply -f kubernetes/local-pv.yaml
 kubectl apply -f kubernetes/local-pvc.yaml
 kubectl apply -f kubernetes/mongodb-deployment.yaml
