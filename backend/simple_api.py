@@ -1,92 +1,70 @@
-import json
-from http.server import BaseHTTPRequestHandler, HTTPServer
-from urllib.parse import parse_qs, urlparse
-import os
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pymongo import MongoClient
+from pydantic import BaseModel
+from typing import List, Optional
 from dotenv import load_dotenv
 
-from generate_data import generate_data
-from pymongo import MongoClient
-from bson.objectid import ObjectId
+from generate_data import generate_data  # Ensure this import is correct
 
+# Run the data generation and load environment variables
 generate_data()
 load_dotenv()
 
+# Setup the FastAPI app and allow all origins for CORS
+app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-class SimpleAPI(BaseHTTPRequestHandler):
-    def query_db(self, filter={}, collection="products"):
-        client = MongoClient("mongodb://mongo:27017/")
-        db = client.simpledatabase
-        coll = db[collection]
-        return list(coll.find(filter))
 
-    def do_GET(self):
-        query_components = parse_qs(urlparse(self.path).query)
-        filter = {}
+def get_db():
+    client = MongoClient("mongodb://mongo:27017/")
+    return client.simpledatabase
 
-        if "id" in query_components:
-            product_id = query_components["id"][0]
-            filter = {"id": product_id}
-            data_from_mongo = self.query_db(filter)
 
-            if isinstance(data_from_mongo, dict):
-                data_from_mongo["_id"] = str(data_from_mongo["_id"])
-        else:
-            data_from_mongo = self.query_db(filter)
-            for item in data_from_mongo:
-                if "_id" in item:
-                    item["_id"] = str(item["_id"])
+def query_db(filter={}, collection="products", db=None):
+    coll = db[collection]
+    return list(coll.find(filter))
 
-        self.send_response(200)
-        self.send_header("Content-type", "application/json")
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.end_headers()
 
-        response = {"message": "Data fetched", "data": data_from_mongo}
-        self.wfile.write(json.dumps(response, default=str).encode("utf-8"))
+class Product(BaseModel):
+    id: str
+    amount_left: Optional[int]
 
-    def do_OPTIONS(self):
-        self.send_response(200, "ok")
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header(
-            "Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE"
-        )
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
-        self.end_headers()
 
-    def do_PUT(self):
-        length = int(self.headers["Content-Length"])
-        post_data = self.rfile.read(length)
-        post_data = json.loads(post_data.decode("utf-8"))
+class ProductList(BaseModel):
+    data: List[Product]
 
-        # Check for required fields
-        if "id" not in post_data:
-            self.send_response(400)
-            self.send_header("Content-type", "application/json")
-            self.end_headers()
-            response = {"message": "Missing 'id'"}
-            self.wfile.write(json.dumps(response).encode("utf-8"))
-            return
 
-        product_id = post_data["id"]
+@app.get("/products", response_model=ProductList)
+async def get_products(id: Optional[str] = None):
+    filter = {}
+    if id:
+        filter = {"id": id}
+    data_from_mongo = query_db(filter, db=get_db())
+    for item in data_from_mongo:
+        if "_id" in item:
+            item["_id"] = str(item["_id"])
+    return {"data": data_from_mongo}
 
-        # Connect to MongoDB
-        client = MongoClient("mongodb://mongo:27017/")
-        db = client.simpledatabase
-        coll = db["products"]
 
-        coll.update_one({"id": product_id}, {"$inc": {"amount_left": -1}})
+@app.put("/products", response_model=dict)
+async def update_product(product: Product):
+    if not product.id:
+        raise HTTPException(status_code=400, detail="Missing 'id'")
 
-        self.send_response(200)
-        self.send_header("Content-type", "application/json")
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.end_headers()
-
-        response = {"message": "Stock decreased by 1"}
-        self.wfile.write(json.dumps(response).encode("utf-8"))
+    db = get_db()
+    coll = db["products"]
+    coll.update_one({"id": product.id}, {"$inc": {"amount_left": -1}})
+    return {"message": "Stock decreased by 1"}
 
 
 if __name__ == "__main__":
-    server_address = ("", 8080)
-    httpd = HTTPServer(server_address, SimpleAPI)
-    print("Running server...")
-    httpd.serve_forever()
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8080, reload=True)

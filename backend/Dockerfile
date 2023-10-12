@@ -4,8 +4,7 @@ WORKDIR /app
 COPY . /app/
 
 RUN pip install /app/packages/*
-RUN pip install /app/packages/*
 
-# RUN pip install pymongo
+EXPOSE 8080
 
-ENTRYPOINT ["python3", "/app/simple_api.py"]
+CMD ["uvicorn", "your_filename:app", "--host", "0.0.0.0", "--port", "80"]
