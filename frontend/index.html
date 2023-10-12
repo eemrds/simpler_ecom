@@ -25,8 +25,9 @@
 
     <script>
         let link = 'http://54.211.205.82'
-        let url = `${link}:30080`;
-        fetch(url)
+        let port = '30080'
+        let url = `${link}:${port}`;
+        fetch(`${url}/products`)
         .then(response => response.json())
         .then(data => {
             const productContainer = document.getElementById('productContainer');
@@ -52,7 +53,7 @@
                 const buyBtn = document.createElement('button');
                 buyBtn.innerText = 'Buy';
                 buyBtn.onclick = () => {
-                    fetch(url, {
+                    fetch(`${url}/products`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',

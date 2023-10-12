@@ -34,7 +34,7 @@ INITIAL_DATA = [
 
 
 def generate_data():
-    client = MongoClient("mongodb://:27017/")
+    client = MongoClient("mongodb://mongo:27017/")
     db = client["simpledatabase"]
     collection = db["products"]
 
