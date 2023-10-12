@@ -32,6 +32,20 @@ spec:
           periodSeconds: 10
           tcpSocket:
             port: 27017
+        readinessProbe:
+          exec:
+            command:
+            - mongo
+            - --eval
+            - db.adminCommand('ping')
+          initialDelaySeconds: 15
+          periodSeconds: 5
+            readinessProbe:
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+
+
       volumes:
       - name: mongo-data
         persistentVolumeClaim:
