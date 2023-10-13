@@ -7,8 +7,9 @@ Creates a simple e-commerce site where you can buy products. It consists of an p
 ## Run
 
 1. Need to specify the `let link=<public-ip>` in `frontend/index.html`.
-2. Need to change the dockerhub username in `scripts/dockerhub_push.sh`
-3. Run the following command to install everything and run the app
+2. Need to specify the `let port=<port>` in `frontend/index.html`.
+3. Need to change the dockerhub username in `scripts/dockerhub_push.sh`
+4. Run the following command to install everything and run the app
 
 ```bash
 cd simpler_ecom && scripts/run.sh
