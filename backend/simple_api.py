@@ -99,6 +99,8 @@ async def update_product(product: ProductUpdate) -> Dict[str, Any]:
 
     db = get_db()
     coll = db["products"]
+    if coll.find_one({"id": product.id})["amount_left"] < 1:
+        raise HTTPException(status_code=400, detail="Out of stock")
     coll.update_one({"id": product.id}, {"$inc": {"amount_left": -1}})
     return {"message": "Stock decreased by 1"}
 
